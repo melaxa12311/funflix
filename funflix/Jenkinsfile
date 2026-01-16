@@ -1,0 +1,67 @@
+pipeline {
+    agent any
+
+    environment {
+        BACKEND_IMAGE = "funflix-backend"
+        FRONTEND_IMAGE = "funflix-frontend"
+        BACKEND_CONTAINER = "funflix-backend-container"
+        FRONTEND_CONTAINER = "funflix-frontend-container"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                echo 'Code checked out automatically by Jenkins'
+                checkout scm
+            }
+        }
+
+        stage('Build Backend Docker Image') {
+            steps {
+                echo 'Building backend Docker image...'
+                sh 'docker build -t $BACKEND_IMAGE ./backend'
+            }
+        }
+
+        stage('Build Frontend Docker Image') {
+            steps {
+                echo 'Building frontend Docker image...'
+                sh 'docker build -t $FRONTEND_IMAGE ./frontend'
+            }
+        }
+
+        stage('Stop Existing Containers') {
+            steps {
+                echo 'Stopping old containers if they exist...'
+                sh '''
+                docker rm -f $BACKEND_CONTAINER || true
+                docker rm -f $FRONTEND_CONTAINER || true
+                '''
+            }
+        }
+
+        stage('Run Backend Container') {
+            steps {
+                echo 'Starting backend container...'
+                sh 'docker run -d -p 5000:5000 --name $BACKEND_CONTAINER $BACKEND_IMAGE'
+            }
+        }
+
+        stage('Run Frontend Container') {
+            steps {
+                echo 'Starting frontend container...'
+                sh 'docker run -d -p 3000:80 --name $FRONTEND_CONTAINER $FRONTEND_IMAGE'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ Docker images built and containers are running! Access frontend at http://localhost:3000'
+        }
+        failure {
+            echo '❌ Build failed'
+        }
+    }
+}
+
