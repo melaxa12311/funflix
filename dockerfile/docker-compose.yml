@@ -1,0 +1,23 @@
+services:
+  mysql-db:
+    image: mysql:latest
+    container_name: mysql-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+    volumes:
+      - data:/var/lib/mysql
+
+  my-nginx:
+    image: nginx:latest
+    container_name: my-nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./html:/usr/share/nginx/html
+    depends_on:
+      - mysql-db
+
+volumes:
+  data:
+

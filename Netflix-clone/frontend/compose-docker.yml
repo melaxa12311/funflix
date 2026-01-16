@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: ./frontend
+    container_name: miniflix-frontend
+    ports:
+      - "8080:80"
+
+  backend:
+    build: ./backend
+    container_name: miniflix-backend
+    ports:
+      - "5000:5000"
+
+  mysql-db:
+    image: mysql:latest
+    container_name: miniflix-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+    volumes:
+      - db:/var/lib/mysql
+
+volumes:
+  db:
+

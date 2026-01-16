@@ -1,0 +1,7 @@
+# start from ubuntu latest image
+from ubuntu:latest
+# update packages and install curl
+RUN apt-get update && apt-get install -y curl
+# Default command when container starts
+CMD ["bash"]
+

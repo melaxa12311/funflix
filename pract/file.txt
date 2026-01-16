@@ -1,0 +1,2 @@
+jai shree mataji
+server is down cat /home/pavan/cron.txt
